@@ -18,12 +18,14 @@ Dim intRes As Integer
 Dim strMsg As String
 Dim strThismsg As String
 Dim intOldmsgstart As Integer
+Dim bForceAttch As Boolean
 
 ' Does not search for "Attach", but for all strings in an array that is defined here
 Dim sSearchStrings(2) As String
 Dim bFoundSearchstring As Boolean
 Dim i As Integer
 
+bForceAttch = True
 bFoundSearchstring = False
 sSearchStrings(0) = "attach"
 sSearchStrings(1) = "enclose"
@@ -51,11 +53,19 @@ Next i
 
 If bFoundSearchstring Then
     If Item.Attachments.Count = 0 Then
-        strMsg = "警告:您的邮件缺少附件,请注意添加" & vbNewLine & "确认是否发送?"
-        intRet = MsgBox(strMsg, vbYesNo + vbMsgBoxSetForeground + vbDefaultButton2 + vbExclamation, "缺少附件")
-        If intRet = vbNo Then
-            Cancel = True
-            Exit Sub
+        If bForceAttch Then
+            intRet = MsgBox("警告:您的邮件缺少附件,请注意添加附件！！！" & vbNewLine, vbOKOnly + vbMsgBoxSetForeground + vbExclamation, "缺少附件")
+            If intRet = vbOK Then
+                Cancel = True
+                Exit Sub
+            End If
+        Else
+            strMsg = "警告:您的邮件缺少附件,请注意添加！！！" & vbNewLine & "确认是否发送?"
+            intRet = MsgBox(strMsg, vbYesNo + vbMsgBoxSetForeground + vbDefaultButton2 + vbExclamation, "缺少附件")
+            If intRet = vbNo Then
+                Cancel = True
+                Exit Sub
+            End If
         End If
     End If
 End If
